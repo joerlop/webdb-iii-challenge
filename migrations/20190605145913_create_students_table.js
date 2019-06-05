@@ -1,15 +1,12 @@
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable("students", function(tbl) {
-    tbl.increments();
-
-    tbl
-      .string("name")
-      .notNullable()
-      .unique();
-    
-    tbl
+  return knex.schema.createTable("students", table => {
+    table.increments();
+    table.string("name").notNullable();
+    table
       .integer("cohort_id")
-      .notNullable()
+      .unsigned()
+      .references("id")
+      .inTable("cohorts");
   });
 };
 
