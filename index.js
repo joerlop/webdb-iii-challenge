@@ -27,56 +27,67 @@ server.post('/api/cohorts', (req, res) => {
   })
 });
 
-router.get('/api/cohorts', (req, res) => {
+server.get('/api/cohorts', (req, res) => {
   db("cohorts")
-  .then(zoos => {
-    res.status(200).json(zoos)
+  .then(cohorts => {
+    res.status(200).json(cohorts)
   })
   .catch(err => {
     res.status(500).json(err)
   })
 });
 
-router.get('/:id', (req, res) => {
-  db("zoos")
+server.get('/api/cohorts/:id', (req, res) => {
+  db("cohorts")
   .where({id: req.params.id})
   .first()
-  .then(zoo => {
-    if (zoo) res.status(200).json(zoo)
-    else zoo.status(404).json("Record not found")
+  .then(cohort => {
+    if (cohort) res.status(200).json(cohort)
+    else res.status(404).json("Cohord not found")
   }).catch(err => {
     res.status(500).json(err)
   })
 });
 
-router.put('/:id', (req, res) => {
+server.get('/api/cohorts/:id/students', (req, res) => {
+  db("students")
+  .where({cohort_id: req.params.id})
+  .then(students => {
+    if (students) res.status(200).json(students)
+    else res.status(404).json("Cohort not found")
+  }).catch(err => {
+    res.status(500).json(err)
+  })
+});
+
+server.put('/api/cohorts/:id', (req, res) => {
   const changes = req.body;
-  db("zoos")
+  db("cohorts")
   .where({id: req.params.id})
   .update(changes)
   .then(count => {
     if (count > 0) {
-      db("zoos")
+      db("cohorts")
       .where({id: req.params.id})
       .first()
-      .then(zoo => {
-        res.status(200).json(zoo)
+      .then(cohort => {
+        res.status(200).json(cohort)
       }) 
     } else {
-      res.status(404).json("Zoo not found")
+      res.status(404).json("Cohort not found")
     }
   }).catch(err => {
     res.status(500).json(err)
   })
 });
 
-router.delete('/:id', (req, res) => {
-  db("zoos")
+server.delete('/api/cohorts/:id', (req, res) => {
+  db("cohorts")
   .where({id: req.params.id})
   .del()
   .then(count => {
     if (count > 0) res.status(204).end()
-    else zoo.status(404).json("Zoo not found")
+    else res.status(404).json("Cohort not found")
   }).catch(err => {
     res.status(500).json(err)
   })
